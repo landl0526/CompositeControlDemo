@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CompositeControlDemo.MyControl"
+             x:Name="This"
+             xmlns:local="clr-namespace:CompositeControlDemo">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <local:SelectedItemEventArgsToSelectedItemConverter x:Key="SelectedItemConverter"/>
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="70"/>
+            </Grid.RowDefinitions>
+            <Entry x:Name="innerEntry" 
+                   Grid.Row="0">
+                <Entry.Behaviors>
+                    <local:EventToCommandBehavior EventName="TextChanged" 
+                                                          Command="{Binding EntryTextChanged, Source={Reference This}}" />
+                </Entry.Behaviors>
+            </Entry>
+            <ListView x:Name="innerSuggestionBox" RowHeight="25"
+                        Grid.Row="1"
+                        IsVisible="{Binding IsEntryVisible, Source={Reference This}}" >
+                <!--behaviors:ItemTappedCommandListView.ItemTappedCommand="{Binding SuggestionItemTapped, Source={Reference This}}">-->
+                <ListView.Behaviors>
+                    <local:EventToCommandBehavior EventName="ItemTapped" 
+                                                          Command="{Binding SuggestionItemTapped, Source={Reference This}}" Converter="{StaticResource SelectedItemConverter}"/>
+                </ListView.Behaviors>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout Orientation="Horizontal">
+                                    <Label Text="{Binding .}" HorizontalOptions="Start" />
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </Grid>
+    </ContentView.Content>
+</ContentView>
